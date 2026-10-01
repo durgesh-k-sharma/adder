@@ -1,0 +1,126 @@
+$ cat test/37.snek
+37
+$ make test/37.run
+cargo run -- test/37.snek test/37.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.05s
+     Running `target/debug/adder test/37.snek test/37.s`
+nasm -f elf64 test/37.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/37.run
+$ cat test/37.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 37
+  ret
+$ ./test/37.run
+37
+
+$ cat test/add.snek
+(sub1 (sub1 (add1 73)))
+$ make test/add.run
+cargo run -- test/add.snek test/add.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.04s
+     Running `target/debug/adder test/add.snek test/add.s`
+nasm -f elf64 test/add.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/add.run
+$ cat test/add.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 73
+add rax, 1
+sub rax, 1
+sub rax, 1
+  ret
+$ ./test/add.run
+72
+
+$ cat test/example1.snek
+(add1 (sub1 5))
+$ make test/example1.run
+cargo run -- test/example1.snek test/example1.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/example1.snek test/example1.s`
+nasm -f elf64 test/example1.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example1.run
+$ cat test/example1.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 5
+sub rax, 1
+add rax, 1
+  ret
+$ ./test/example1.run
+5
+
+$ cat test/example3.snek
+(negate (add1 3))
+$ make test/example3.run
+cargo run -- test/example3.snek test/example3.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.04s
+     Running `target/debug/adder test/example3.snek test/example3.s`
+nasm -f elf64 test/example3.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example3.run
+$ cat test/example3.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 3
+add rax, 1
+neg rax
+  ret
+$ ./test/example3.run
+-4
+
+$ cat test/negate_nested.snek
+(sub1 (negate (add1 (negate 10))))
+$ make test/negate_nested.run
+cargo run -- test/negate_nested.snek test/negate_nested.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.04s
+     Running `target/debug/adder test/negate_nested.snek test/negate_nested.s`
+nasm -f elf64 test/negate_nested.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/negate_nested.run
+$ cat test/negate_nested.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 10
+neg rax
+add rax, 1
+neg rax
+sub rax, 1
+  ret
+$ ./test/negate_nested.run
+8
+
+$ cat test/negate_neg.snek
+(negate -5)
+$ make test/negate_neg.run
+cargo run -- test/negate_neg.snek test/negate_neg.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/negate_neg.snek test/negate_neg.s`
+nasm -f elf64 test/negate_neg.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/negate_neg.run
+$ cat test/negate_neg.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, -5
+neg rax
+  ret
+$ ./test/negate_neg.run
+5
+
