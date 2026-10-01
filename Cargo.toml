@@ -1,0 +1,10 @@
+[package]
+name = "adder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sexp = "1.1.4"
+
+[dev-dependencies]
+prettydiff = "0.6.4"
